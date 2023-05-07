@@ -1,0 +1,120 @@
+#include <Wire.h>
+#include <Adafruit_MCP4725.h>
+int refV = 5037;
+
+Adafruit_MCP4725 dac;
+int mV;
+float V;
+
+void setup(void){
+  Serial.begin(9600);
+  pinMode(A0,INPUT);
+  pinMode(A1,INPUT);
+  dac.begin(0x60);
+  pinMode(7,OUTPUT);
+  pinMode(6,OUTPUT); 
+}
+
+void loop(void){
+  int a;
+  int b;
+  float c;
+  for(int i=1; i<11; i=i+1){
+    if(i%2==0){
+      for(a =600; a>-210; a=a-5){
+        if(a<0)
+        {
+          delay(100);
+          digitalWrite(6,HIGH);
+          digitalWrite(7,HIGH); 
+        }else
+        {
+          delay(100);
+          digitalWrite(6,LOW);
+          digitalWrite(7,LOW);
+        }
+      c = abs(a); 
+      setmV(c);
+      //Serial.print("Vin=");
+      Serial.print(a);
+      //Serial.print("mV");
+      //Serial.println();
+      Serial.print(" ");
+      delay(300);
+
+      int signbit = analogRead(A0);
+      int adcread = analogRead(A1);
+      float adcc = map(adcread,0,1023,0,5000);
+      float adc;
+      float dongdien;
+      if (signbit>200) { adc = adcc * -1; } else { adc = adcc * 1; };
+      dongdien = adc / 10;
+      //Serial.print("Vout=");
+      //Serial.print( adc);
+      Serial.print(dongdien);
+      Serial.print(" ");
+      Serial.print(signbit);
+      //Serial.println("mV");
+      Serial.println();
+      delay(100);  
+      }
+    }  
+    else{
+      for(a =-200; a<610; a=a+5){
+        if(a<0)
+        {
+          delay(100);
+          digitalWrite(6,HIGH);
+          digitalWrite(7,HIGH); 
+        }else
+        {
+          delay(100);
+          digitalWrite(6,LOW);
+          digitalWrite(7,LOW);
+        }
+      c = abs(a);
+      setmV(c);
+      //Serial.print("Vin=");
+      Serial.print(a);
+      //Serial.print("mV");
+      //Serial.println();
+      Serial.print(" ");
+      delay(300);
+
+      int signbit = analogRead(A0);
+      int adcread = analogRead(A1);
+      float adcc = map(adcread,0,1023,0,5000);
+      float adc;
+      float dongdien;
+      if (signbit>200) { adc = adcc * -1; } else { adc = adcc * 1; };
+      dongdien = adc / 10;
+      //Serial.print("Vout=");
+      //Serial.print( adc);
+      Serial.print(dongdien);
+      Serial.print(" ");
+      Serial.print(signbit);
+      //Serial.println("mV");
+      //Serial.print(signbit);
+      Serial.println();
+      delay(100);  
+      }
+    }   
+  }
+}
+
+void setmV(float d)
+{
+  
+    mV =d;
+    dac.setVoltage(map(d, 0, refV, 0, 4095), false);
+
+}
+
+
+void setV(float d)
+{
+    V = d;
+    dac.setVoltage( map((d *1000), 0, refV, 0, 4095), false);
+
+}  
+
